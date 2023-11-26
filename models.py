@@ -25,7 +25,6 @@ class People(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     birth_year: Mapped[str] = mapped_column(String(10), nullable=True)
-    # json: Mapped[dict] = mapped_column(JSON, nullable=False)
     eye_color: Mapped[str] = mapped_column(String(15), nullable=True)
     films: Mapped[str] = mapped_column(String(10150), nullable=True)
     gender: Mapped[str] = mapped_column(String(50), nullable=True)
