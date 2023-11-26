@@ -24,21 +24,19 @@ class People(Base):
     __tablename__ = 'swapi_people'
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    # birth_year: Mapped[str] = mapped_column(String(10), nullable=True)
-    # json: Mapped[dict] = mapped_column(JSON, nullable=False)
     birth_year: Mapped[str] = mapped_column(String(10), nullable=True)
     # json: Mapped[dict] = mapped_column(JSON, nullable=False)
     eye_color: Mapped[str] = mapped_column(String(15), nullable=True)
     films: Mapped[str] = mapped_column(String(10150), nullable=True)
-    gender: Mapped[str] = mapped_column(String(6), nullable=True)
+    gender: Mapped[str] = mapped_column(String(50), nullable=True)
     hair_color: Mapped[str] = mapped_column(String(20), nullable=True)
-    height: Mapped[str] = mapped_column(String(3), nullable=True)
+    height: Mapped[str] = mapped_column(String(10), nullable=True)
     homeworld: Mapped[str] = mapped_column(String(150), nullable=True)
-    mass: Mapped[str] = mapped_column(String(3), nullable=True)
+    mass: Mapped[str] = mapped_column(String(10), nullable=True)
     name: Mapped[str] = mapped_column(String(50), nullable=True)
     skin_color: Mapped[str] = mapped_column(String(50), nullable=True)
     species: Mapped[str] = mapped_column(String(150), nullable=True)
-    starships: Mapped[str] = mapped_column(String(150), nullable=True)
+    starships: Mapped[str] = mapped_column(String(500), nullable=True)
     vehicles: Mapped[str] = mapped_column(String(150), nullable=True)
     
 

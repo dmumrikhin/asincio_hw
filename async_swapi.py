@@ -17,28 +17,84 @@ from models import init_db, People, Session
 
 CHUNK_SIZE = 10                 # ограничиваем кол-во запросов к серверу
 
+
+# async def get_film(film_link, session):         # АФ
+    
+#     response = await session.get(f'{film_link}')
+#     json = await response.json()
+#     return json
+
+async def get_add_info(link, session):         # АФ
+    
+    response = await session.get(f'{link}')
+    json = await response.json()
+    return json
+
+    
+
+
 async def paste_to_db(people):
     async with Session() as session:
-        # people = [People(json=person) for person in people] 
         result = []
         for person in people:
             if 'name' in person:
-                # result += [People(json=person, name=person['name'])] #person['birth_year']
-                # result += [People(name=person['name'])] #person['birth_year']
+                async with aiohttp.ClientSession() as inner_session:
+                    
+                    # получаем фильмы
+                    coros = [get_add_info(film, inner_session) for film in person['films']]
+                    film_names = await asyncio.gather(*coros)
+                    films = ''
+                    for item in film_names:
+                        films += f"{item['title']}, "
+                    films = films[:-2]
+                    
+                    # получаем homeworld
+                    coros = get_add_info(person['homeworld'], inner_session)
+                    homeworld = await asyncio.gather(coros)
+                    homeworld = homeworld[0]['name']
+
+                    # получаем species
+                    coros = [get_add_info(specie,
+                                           inner_session) for specie in person['species']]
+                    specie_names = await asyncio.gather(*coros)
+                    species = ''
+                    for item in specie_names:
+                        species += f"{item['name']}, "
+                    species = species[:-2]
+
+                    # получаем starships
+                    coros = [get_add_info(starship,
+                                           inner_session) for starship in person['starships']]
+                    starship_names = await asyncio.gather(*coros)
+                    starships = ''
+                    for item in starship_names:
+                        starships += f"{item['name']}, "
+                    starships = starships[:-2]
+                    
+                    # получаем vehicles
+                    coros = [get_add_info(vehicle,
+                                           inner_session) for vehicle in person['vehicles']]
+                    vehicle_names = await asyncio.gather(*coros)
+                    vehicles = ''
+                    for item in vehicle_names:
+                        vehicles += f"{item['name']}, "
+                    vehicles = vehicles[:-2]
+                        
+
 
                 result += [People(birth_year=person['birth_year'],
                                   eye_color=person['eye_color'],
-                                  films=str(person['films']),
-                #                 #   gender=person['gender'],
-                #                 #   hair_color=person['hair_color'],
-                #                 #   height=person['height'],
-                #                 #   homeworld=person['homeworld'],
-                #                 #   mass=person['mass'],
-                #                 #   name=person['name'],
-                #                 #   skin_color=person['skin_color'],
-                #                 #   species=person['species'],
-                #                 #   starships=person['starships'],
-                #                 #   vehicles=person['vehicles']
+                                  films=films,
+                                  gender=person['gender'],
+                                  hair_color=person['hair_color'],
+                                  height=person['height'],
+                                  homeworld=homeworld,
+                                  mass=person['mass'],
+                                  name=person['name'],
+                                  skin_color=person['skin_color'],
+                                  species=species,
+                                  starships=starships,
+                                  vehicles=vehicles
                                   )]
 
         session.add_all(result)
@@ -56,11 +112,6 @@ async def get_person(person_id, session):         # АФ
     # return birth_year
     return json
 
-async def get_film(films_list, session):         # АФ
-    for film in films_list:
-        response = await session.get(f'{film}')
-    json = await response.json()
-    return json
 
 
     
